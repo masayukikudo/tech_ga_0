@@ -4,10 +4,8 @@ from flask import render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required
 from flask_bootstrap import BOOTSTRAP_VERSION, Bootstrap
-
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
-
 from datetime import datetime
 import pytz
 
