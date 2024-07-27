@@ -2,8 +2,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from datetime import datetime
-import openai
-import logging
+from openai import OpenAI
 import pandas as pd
 from io import BytesIO
 import xlsxwriter
@@ -16,11 +15,8 @@ app.config['IMAGE_FOLDER'] = r'C:\Users\masay\Documents\pandas\Step3\Step3-2\new
 db = SQLAlchemy(app)
 CORS(app)
 
-# APIキーを直接指定
-api_key = "SECRET_KEY"
-
-# APIキーを直接使用してクライアントを初期化
-openai.api_key = api_key
+# OpenAI APIキーの設定
+client = OpenAI(api_key="YOUR_SECRET_KEY")
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -41,17 +37,16 @@ def chat_with_gpt():
     """
 
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": context},
                 {"role": "user", "content": user_input}
             ],
-            temperature=0.7,  # 温度パラメータを低く設定
-            top_p=1.0  # 生成の確定性を高める
+            temperature=0.7  # 温度パラメータを低く設定
         )
-        full_response = response.choices[0].message['content'].strip()
 
+        full_response = response.choices[0].message.content.strip()
         if not full_response.endswith('.'):
             full_response += '.'
 
